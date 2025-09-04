@@ -1,11 +1,12 @@
 import { View, Text } from 'react-native'
 import React from 'react'
-import { Stack } from 'expo-router'
+import { Redirect, Stack } from 'expo-router'
+import { useAuth } from '@clerk/clerk-expo'
 
 const TabsLayout = () => {
     const { isSignedIn } = useAuth()
 
-    if (isSignedIn) {
+    if (!isSignedIn) {
         return <Redirect href={'/(auth)/sign-in'} />
     }
 

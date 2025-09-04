@@ -1,6 +1,6 @@
 import { useSignIn } from '@clerk/clerk-expo'
 import { Link, useRouter } from 'expo-router'
-import { Image, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Alert, Image, KeyboardAvoidingView, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { authStyles } from '../../assets/styles/auth.styles';
 import { COLORS } from '../../constants/colors';
@@ -17,7 +17,14 @@ export default function Page() {
 
   // Handle the submission of the sign-in form
   const onSignInPress = async () => {
+    if (!emailAddress || !password) {
+      Alert.alert("Error", "Please fill all fields.")
+      return;
+    }
+
     if (!isLoaded) return
+
+    setLoading(true)
 
     // Start the sign-in process using the email and password provided
     try {
@@ -34,12 +41,16 @@ export default function Page() {
       } else {
         // If the status isn't complete, check why. User might need to
         // complete further steps.
+        Alert.alert("Error", "Sign in failed. Please try again.")
         console.error(JSON.stringify(signInAttempt, null, 2))
       }
     } catch (err) {
       // See https://clerk.com/docs/custom-flows/error-handling
       // for more info on error handling
+      Alert.alert("Error", err?.errors?.[0]?.message || "Sign in failed.")
       console.error(JSON.stringify(err, null, 2))
+    } finally {
+      setLoading(false)
     }
   }
 
